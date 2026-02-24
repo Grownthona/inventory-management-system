@@ -22,4 +22,14 @@ class JournalEntry extends Model
         return $this->hasMany(JournalEntryLine::class);
     }
 
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class, 'reference_id');
+    }
+
+    // public function reference()
+    // {
+    //     return $this->morphTo();
+    // }
+
 }
