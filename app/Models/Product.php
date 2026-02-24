@@ -13,4 +13,20 @@ class Product extends Model
         'name', 'sku', 'purchase_price', 'sell_price',
         'opening_stock', 'current_stock', 'description'
     ];
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
+    public function getTotalSoldAttribute()
+    {
+        return $this->sales()->sum('quantity');
+    }
+
+    public function getCostOfGoodsSoldAttribute()
+    {
+        return $this->total_sold * $this->purchase_price;
+    }
+
 }

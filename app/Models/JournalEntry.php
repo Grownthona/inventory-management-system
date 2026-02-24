@@ -17,4 +17,9 @@ class JournalEntry extends Model
         'entry_date' => 'date',
     ];
 
+    public function lines()
+    {
+        return $this->hasMany(JournalEntryLine::class);
+    }
+
 }
