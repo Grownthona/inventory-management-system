@@ -343,7 +343,7 @@ This is standard double-entry bookkeeping as used in real-world accounting syste
 
 | Layer | Technology |
 |---|---|
-| Backend Framework | Laravel 10 / 11 |
+| Backend Framework | Laravel 12 |
 | Templating | Blade |
 | Styling | Bootstrap 5.3 |
 | Icons | Bootstrap Icons |
