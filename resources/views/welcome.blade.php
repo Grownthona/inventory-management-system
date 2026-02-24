@@ -1,164 +1,171 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Inventory Management System')</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        :root {
-            --sidebar-width: 250px;
-            --primary: #1a73e8;
-            --dark-bg: #0f172a;
-            --sidebar-bg: #1e293b;
-        }
-        body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
-        .sidebar {
-            width: var(--sidebar-width);
-            min-height: 100vh;
-            background: var(--sidebar-bg);
-            position: fixed;
-            top: 0; left: 0;
-            z-index: 100;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-        }
-        .sidebar .brand {
-            padding: 20px 16px;
-            background: var(--dark-bg);
-            border-bottom: 1px solid #334155;
-        }
-        .sidebar .brand h5 { color: #fff; margin: 0; font-weight: 700; font-size: 1rem; }
-        .sidebar .brand small { color: #94a3b8; font-size: 0.75rem; }
-        .sidebar .nav-link {
-            color: #94a3b8;
-            padding: 10px 20px;
-            border-radius: 0;
-            transition: all 0.2s;
-            font-size: 0.875rem;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(255,255,255,0.08);
-            border-left: 3px solid var(--primary);
-        }
-        .sidebar .nav-link i { margin-right: 8px; width: 16px; }
-        .sidebar .section-label {
-            color: #475569;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 16px 20px 4px;
-        }
-        .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-        }
-        .topbar {
-            background: #fff;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 12px 24px;
-        }
-        .content-area { padding: 24px; }
-        .stat-card {
-            border: none;
-            border-radius: 12px;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover { transform: translateY(-2px); }
-        .stat-icon {
-            width: 48px; height: 48px;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem;
-        }
-        .table thead th { background: #f8fafc; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        .badge-status { font-size: 0.7rem; padding: 4px 8px; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-        .btn-primary { background: var(--primary); border-color: var(--primary); }
-        .page-header { margin-bottom: 24px; }
-        .page-header h4 { font-weight: 700; color: #0f172a; margin: 0; }
-        .profit-positive { color: #16a34a; font-weight: 600; }
-        .profit-negative { color: #dc2626; font-weight: 600; }
-    </style>
-    @stack('styles')
-</head>
-<body>
+@extends('layouts.app')
 
-<!-- Sidebar -->
-<div class="sidebar">
-    <div class="brand">
-        <h5><i class="bi bi-box-seam-fill text-primary me-2"></i>InvManager</h5>
-        <small>Inventory & Accounting</small>
+@section('title', 'Dashboard')
+@section('breadcrumb', 'Dashboard')
+
+@section('content')
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4><i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard</h4>
+        <p class="text-muted mb-0">Overview of your inventory & financials</p>
     </div>
-
-    <nav class="mt-2">
-        <div class="section-label">Main</div>
-        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-            <i class="bi bi-speedometer2"></i> Dashboard
+    <div class="d-flex gap-2">
+        <a href="{{ route('sales.create') }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i>New Sale
         </a>
-
-        <div class="section-label">Inventory</div>
-        <a href="{{ route('products.index') }}" class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
-            <i class="bi bi-box-seam"></i> Products
+        <a href="{{ route('products.create') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-box-seam me-1"></i>Add Product
         </a>
-        <a href="{{ route('sales.index') }}" class="nav-link {{ request()->routeIs('sales.*') ? 'active' : '' }}">
-            <i class="bi bi-cart-check"></i> Sales
-        </a>
-        <a href="{{ route('expenses.index') }}" class="nav-link {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
-            <i class="bi bi-cash-stack"></i> Expenses
-        </a>
-
-        <div class="section-label">Accounting</div>
-        <a href="{{ route('reports.journal') }}" class="nav-link {{ request()->routeIs('reports.journal') ? 'active' : '' }}">
-            <i class="bi bi-journal-text"></i> Journal Ledger
-        </a>
-
-        <div class="section-label">Reports</div>
-        <a href="{{ route('reports.financial') }}" class="nav-link {{ request()->routeIs('reports.financial') ? 'active' : '' }}">
-            <i class="bi bi-bar-chart-line"></i> Financial Report
-        </a>
-    </nav>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-    <div class="topbar d-flex align-items-center justify-content-between">
-        <div>
-            <span class="text-muted small">@yield('breadcrumb', 'Dashboard')</span>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-            <span class="badge bg-success">System Active</span>
-            <small class="text-muted">{{ now()->format('d M Y') }}</small>
-        </div>
-    </div>
-
-    <div class="content-area">
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-circle me-2"></i>{{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if($errors->any())
-            <div class="alert alert-danger">
-                <ul class="mb-0">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
-            </div>
-        @endif
-
-        @yield('content')
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-@stack('scripts')
-</body>
-</html>
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-primary bg-opacity-10">
+                    <i class="bi bi-box-seam text-primary"></i>
+                </div>
+                <div>
+                    <div class="text-muted small">Total Products</div>
+                    <div class="fw-bold fs-4">{{ $totalProducts }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-success bg-opacity-10">
+                    <i class="bi bi-cart-check text-success"></i>
+                </div>
+                <div>
+                    <div class="text-muted small">Today's Sales</div>
+                    <div class="fw-bold fs-4">{{ number_format($totalSaleToday, 2) }} TK</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-danger bg-opacity-10">
+                    <i class="bi bi-cash-stack text-danger"></i>
+                </div>
+                <div>
+                    <div class="text-muted small">Today's Expenses</div>
+                    <div class="fw-bold fs-4">{{ number_format($totalExpToday, 2) }} TK</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-warning bg-opacity-10">
+                    <i class="bi bi-exclamation-circle text-warning"></i>
+                </div>
+                <div>
+                    <div class="text-muted small">Total Due (Receivable)</div>
+                    <div class="fw-bold fs-4">{{ number_format($totalDue, 2) }} TK</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Recent Sales -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-primary"></i>Recent Sales</h6>
+                <a href="{{ route('sales.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Invoice</th>
+                                <th>Product</th>
+                                <th>Customer</th>
+                                <th>Net Amount</th>
+                                <th>Due</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recentSales as $sale)
+                            <tr>
+                                <td><a href="{{ route('sales.show', $sale) }}" class="text-decoration-none">{{ $sale->invoice_no }}</a></td>
+                                <td>{{ $sale->product->name }}</td>
+                                <td>{{ $sale->customer_name }}</td>
+                                <td class="text-success fw-bold">{{ number_format($sale->net_amount, 2) }} TK</td>
+                                <td>
+                                    @if($sale->due_amount > 0)
+                                        <span class="badge bg-danger">{{ number_format($sale->due_amount, 2) }} TK</span>
+                                    @else
+                                        <span class="badge bg-success">Paid</span>
+                                    @endif
+                                </td>
+                                <td class="text-muted">{{ $sale->sale_date->format('d M Y') }}</td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="6" class="text-center text-muted py-4">No sales yet. <a href="{{ route('sales.create') }}">Create first sale</a></td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock & Quick Actions -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle me-2 text-warning"></i>Low Stock Alert</h6>
+            </div>
+            <div class="card-body">
+                @forelse($lowStockProducts as $p)
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                    <span class="small">{{ $p->name }}</span>
+                    <span class="badge bg-{{ $p->current_stock == 0 ? 'danger' : 'warning' }}">
+                        {{ $p->current_stock }} left
+                    </span>
+                </div>
+                @empty
+                <p class="text-muted text-center py-3">
+                    <i class="bi bi-check-circle text-success fs-4 d-block mb-2"></i>
+                    All products have healthy stock!
+                </p>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-lightning me-2 text-primary"></i>Quick Actions</h6>
+            </div>
+            <div class="card-body d-grid gap-2">
+                <a href="{{ route('sales.create') }}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-cart-plus me-1"></i> Record New Sale
+                </a>
+                <a href="{{ route('products.create') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i> Add Product
+                </a>
+                <a href="{{ route('expenses.create') }}" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-dash-circle me-1"></i> Add Expense
+                </a>
+                <a href="{{ route('reports.financial') }}" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-bar-chart me-1"></i> View Reports
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection
